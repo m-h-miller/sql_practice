@@ -76,6 +76,25 @@ def neighbors_of_b_countries
   # List the name and continent of countries in the continents containing
   # 'Belize', 'Belgium'.
   execute(<<-SQL)
+    SELECT
+      name, continent
+    FROM
+      countries
+    WHERE
+    continent =
+    (SELECT
+      continent
+     FROM
+      countries
+     WHERE
+      name = 'Belgium') OR
+      continent =
+      (SELECT
+        continent
+       FROM
+        countries
+       WHERE
+        name = 'Belize')
   SQL
 end
 
@@ -83,6 +102,28 @@ def population_constraint
   # Which country has a population that is more than Canada but less than
   # Poland? Show the name and the population.
   execute(<<-SQL)
+    SELECT
+      name, population
+    FROM
+      countries
+    WHERE
+      population >
+        (
+        SELECT
+          population
+        FROM
+          countries
+        WHERE
+          name = 'Canada'
+        )
+    AND population < (
+        SELECT
+          population
+        FROM
+          countries
+        WHERE
+          name = 'Poland'
+        )
   SQL
 end
 
@@ -90,5 +131,20 @@ def sparse_continents
   # Find each country that belongs to a continent where all populations are
   # less than 25,000,000. Show name, continent and population.
   execute(<<-SQL)
+    SELECT
+      name,
+      continent,
+      population
+    FROM
+      countries
+    WHERE
+      continent NOT IN (
+        SELECT 
+          continent
+        FROM
+          countries
+        WHERE
+          population >= 25000000
+      )
   SQL
 end
